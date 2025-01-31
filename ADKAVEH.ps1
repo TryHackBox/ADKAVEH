@@ -1,12 +1,12 @@
 # Help function to display usage instructions
 function Show-Help {
     Write-Host @"
-==================================================
-Active Directory Enumeration and Attack Script
-==================================================
+========================================================
+Active Directory Enumeration and Attack Script by Kaveh
+========================================================
 
 Usage:
-    .\ScriptName.ps1 [-Help] [-Domain <DomainName>] [-Username <Username>] [-Password <Password>]
+    .\ADKAVEH.ps1 [-Help] [-Domain <DomainName>] [-Username <Username>] [-Password <Password>]
 
 Options:
     -Help              Show this help message and exit.
@@ -49,7 +49,7 @@ Available Functions:
         - Scans for accounts with constrained delegation.
 
 Example:
-    .\ScriptName.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString)
+    .\ADKAVEH.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString)
 "@ -ForegroundColor Cyan
 }
 
