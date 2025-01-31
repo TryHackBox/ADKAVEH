@@ -1,3 +1,70 @@
+# Help function to display usage instructions
+function Show-Help {
+    Write-Host @"
+==================================================
+Active Directory Enumeration and Attack Script
+==================================================
+
+Usage:
+    .\ScriptName.ps1 [-Help] [-Domain <DomainName>] [-Username <Username>] [-Password <Password>]
+
+Options:
+    -Help              Show this help message and exit.
+    -Domain            Specify the domain name.
+    -Username          Specify the username.
+    -Password          Specify the password (will be prompted securely).
+
+Available Functions:
+    1. Disable-WindowsDefender
+       - Temporarily disables Windows Defender real-time monitoring.
+
+    2. Invoke-KerberoastingScan
+       - Scans for accounts with SPN (Service Principal Name) for Kerberoasting.
+
+    3. Invoke-ACLAbuseScan
+       - Checks for potential ACL (Access Control List) abuses.
+
+    4. Invoke-PasswordSprayingAttack
+       - Performs a password spraying attack using a test password.
+
+    5. Invoke-GoldenTicketDetection
+       - Detects potential Golden Ticket attacks in the domain.
+
+    6. Invoke-InactiveAccountDiscovery
+       - Finds inactive accounts (last logon > 90 days).
+
+    7. Invoke-GPOAbuse
+       - Scans for potential Group Policy Object (GPO) abuses.
+
+    8. Invoke-AdminSDHolderAbuse
+       - Checks for potential AdminSDHolder abuses.
+
+    9. Invoke-ASREPRoasting
+       - Scans for accounts vulnerable to AS-REP Roasting.
+
+    10. Invoke-UnconstrainedDelegationAbuse
+        - Scans for computers with unconstrained delegation.
+
+    11. Invoke-ConstrainedDelegationAbuse
+        - Scans for accounts with constrained delegation.
+
+Example:
+    .\ScriptName.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString)
+"@ -ForegroundColor Cyan
+}
+
+# Check if required modules are installed
+function Check-Modules {
+    $requiredModules = @("ActiveDirectory", "GroupPolicy")
+    foreach ($module in $requiredModules) {
+        if (-not (Get-Module -ListAvailable -Name $module)) {
+            Write-Host "Module $module is not installed. Please install it using: Install-WindowsFeature -Name RSAT-AD-PowerShell" -ForegroundColor Red
+            exit
+        }
+        Import-Module $module
+    }
+}
+
 # Temporarily disable Windows Defender
 function Disable-WindowsDefender {
     Write-Host "Disabling Windows Defender temporarily..." -ForegroundColor Yellow
@@ -190,6 +257,14 @@ function Invoke-ConstrainedDelegationAbuse {
 }
 
 # Main script execution
+if ($args[0] -eq "-Help") {
+    Show-Help
+    exit
+}
+
+# Check if required modules are installed
+Check-Modules
+
 $domainName = Read-Host "Enter the domain name"
 $username = Read-Host "Enter the username"
 $password = Read-Host "Enter the password" -AsSecureString
