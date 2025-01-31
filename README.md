@@ -91,4 +91,25 @@ Users can enable or disable specific functions or modify script parameters to al
 **5.Security:**
 By temporarily disabling Windows Defender, the script can run without restrictions, but Defender is re-enabled after execution.
 
+### How to Execute the Script
+
+1. Save the script in a file with a `.ps1` extension, for example, `AD-Attack-Script.ps1`.
+
+2. Open PowerShell with administrative privileges (Run as Administrator).
+
+3. Enter the following command to execute the script:
+
+   .\ADKaveh.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString)
+   
+4. If you need help, use the following command:
+
+    .\ADKaveh.ps1 -Help
+
+   
+### Security Warning
+
+This script is designed for security testing and educational purposes only.
+
+By using this script, you can identify and address potential vulnerabilities in your Active Directory.
+
 
