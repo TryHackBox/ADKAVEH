@@ -1,5 +1,5 @@
 # Configuration for logging
-$logFile = "admaster.log"
+$logFile = "adkaveh.log"
 
 function Log-Activity {
     param (
