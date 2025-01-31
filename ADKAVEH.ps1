@@ -117,8 +117,6 @@ function Invoke-PassTheTicketAttack {
         Log-Activity "Pass-the-Ticket attack failed: $_"
     }
 }
-
-
 # BloodHound Data Collection
 function Invoke-BloodHoundDataCollection {
     Log-Activity "Starting BloodHound data collection..."
@@ -237,7 +235,7 @@ try {
 
 # Final banner
 Write-Host @"
-   _  _   _      ___     _______ _   _
+                                                                         _  _   _      ___     _______ _   _
  _|  |_| |/ /   / \ \   / / ____| | | |
 |_  ..  _| ' /   / _ \ \ / /|  _| | |_| |
 |_      _| . \  / ___ \ V / | |___|  _  |
