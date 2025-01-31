@@ -5,7 +5,7 @@ script, certain prerequisites and configurations are required. Below, a
 complete explanation of the requirements, capabilities, and advantages 
 of this tool is provided.
 
- **Prerequisites for Running the Script**
+ #Prerequisites for Running the Script
 
 1. **Windows Operating System:**
 
@@ -17,16 +17,27 @@ The script utilizes the ActiveDirectory and GroupPolicy
 modules. These modules are typically pre-installed on Windows Server 
 systems. However, if they are not installed, you can install them using 
 the following command:
+                       Install-WindowsFeature -Name RSAT-AD-PowerShell
 
-3. **Infiltration Techniques:**
-   - Adkaveh includes techniques to infiltrate user accounts and obtain unauthorized access. This may include obtaining Credential (Certificates) or using social techniques to bypass security.
+After installation, import the modules using the following command:
+                       Import-Module ActiveDirectory
+                       Import-Module GroupPolicy
 
-4. **Reporting and analyzing:**
-   - This tool usually provides reporting and analytical capabilities to provide information security managers with understandable and structured results.
+3. **Administrative Access:**
+   - To execute this script, you need Domain Admin privileges or equivalent 
+permissions, as many of the script's functions access sensitive AD 
+information.
 
-5. **Customize:**
-   - There may be features to customize interactions and infiltration tests so that the user can adjust the tool to their specific needs and conditions.
+4. **Temporarily Disabling Windows Defender:**
+  - Some functions of this script may be blocked by Windows Defender. Therefore,
+    the script temporarily disables Windows Defender. If Windows Defender 
+    is already disabled, this step is not necessary.
 
+5. **Domain Information:**
+   - To run the script, you need the domain name (DomainName), username 
+     (Username), and password (Password). These details are used to connect 
+      to the domain and execute commands.
+۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰۰
 6. **Help the security teams:**
    - This tool helps security teams and testers to identify and correct the weaknesses by simulating real -time attacks.
 
