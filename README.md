@@ -7,11 +7,16 @@ of this tool is provided.
 
  **Prerequisites for Running the Script**
 
-1. **Identify vulnerability:**
-   - Adkaveh helps the intruders test to identify the vulnerabilities in the Active Directory environment. This includes the weaknesses of configuration, permits, and security settings.
+1. **Windows Operating System:**
 
-2. **Collecting Information:**
-   - This tool is capable of collecting various information about users, groups, and access in an Active Directory environment. This information can be used to evaluate security and identify weaknesses.
+This script is designed for Windows environments and requires PowerShell.
+
+2. **PowerShell Modules:**
+
+The script utilizes the ActiveDirectory and GroupPolicy
+modules. These modules are typically pre-installed on Windows Server 
+systems. However, if they are not installed, you can install them using 
+the following command:
 
 3. **Infiltration Techniques:**
    - Adkaveh includes techniques to infiltrate user accounts and obtain unauthorized access. This may include obtaining Credential (Certificates) or using social techniques to bypass security.
