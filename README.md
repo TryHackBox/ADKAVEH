@@ -5,7 +5,7 @@ script, certain prerequisites and configurations are required. Below, a
 complete explanation of the requirements, capabilities, and advantages 
 of this tool is provided.
 
- ###Prerequisites for Running the Script
+ ### Prerequisites for Running the Script
 
 1. **Windows Operating System:**
 
@@ -38,7 +38,7 @@ information.
      (Username), and password (Password). These details are used to connect 
       to the domain and execute commands.
 
-   ###Script Capabilities
+   ### Script Capabilities
    This script includes various functions for assessing and attacking Active Directory. Below are the main capabilities        explained:
 
  **Temporarily Disabling Windows Defender:**
@@ -75,7 +75,8 @@ This function identifies computers with Unconstrained Delegation enabled.
 **Constrained Delegation Misuse Check:**
 This function identifies user accounts with Constrained Delegation enabled.
 
-###Tool Advantages
+### Tool Advantages
+
 **1.Comprehensiveness:**
 This script covers a wide range of common attacks and vulnerabilities in Active Directory.
 
