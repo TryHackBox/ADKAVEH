@@ -1,8 +1,11 @@
 # ADKAVEH
-This tool is designed for educational purposes.
-The Adkaveh tool mentioned in the GitHub repository is a tool for conducting penetration tests and security evaluation in Active Directory environments. This tool focuses specifically on identifying and exploiting weaknesses in Active Directory infrastructure. The following is a further explanation of its features and performance:
+This PowerShell script is designed for various attacks and security 
+assessments in an Active Directory (AD) environment. To execute this 
+script, certain prerequisites and configurations are required. Below, a 
+complete explanation of the requirements, capabilities, and advantages 
+of this tool is provided.
 
- **Features and performance adkaveh:**
+ **Prerequisites for Running the Script**
 
 1. **Identify vulnerability:**
    - Adkaveh helps the intruders test to identify the vulnerabilities in the Active Directory environment. This includes the weaknesses of configuration, permits, and security settings.
