@@ -73,6 +73,22 @@ Pre-Authentication and could be exploited in AS-REP Roasting attacks.
 This function identifies computers with Unconstrained Delegation enabled.
 
 **Constrained Delegation Misuse Check:**
-This function identifies user accounts with Constrained Delegation enabled/
+This function identifies user accounts with Constrained Delegation enabled.
+
+**Tool Advantages**
+**1.Comprehensiveness:**
+This script covers a wide range of common attacks and vulnerabilities in Active Directory.
+
+**2.Ease of Use:**
+Using simple PowerShell commands, users can easily execute the script and view the results.
+
+**3.No Need for External Tools:**
+The script utilizes built-in PowerShell tools and standard Windows modules, eliminating the need for installing external tools.
+
+**4.Customizability:**
+Users can enable or disable specific functions or modify script parameters to align with their requirements.
+
+**5.Security:**
+By temporarily disabling Windows Defender, the script can run without restrictions, but Defender is re-enabled after execution.
 
 
