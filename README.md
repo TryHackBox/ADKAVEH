@@ -37,6 +37,9 @@ After installation, import the modules using the following command:
      (Username), and password (Password). These details are used to connect 
       to the domain and execute commands.
 
+  ### Use : 
+            .\ADKAVEH.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString) -Verbose -Parallel
+
    ### Script Capabilities
    
      This script includes various functions for assessing and attacking Active Directory. Below are the main capabilities        explained:
