@@ -1,119 +1,294 @@
-# ADKAVEH
-This PowerShell script is designed for various attacks and security 
-assessments in an Active Directory (AD) environment. To execute this 
-script, certain prerequisites and configurations are required. Below, a 
-complete explanation of the requirements, capabilities, and advantages 
-of this tool is provided.
+# ADKAVEH - Active Directory Penetration Testing Toolkit
+A comprehensive PowerShell-based toolkit for Active Directory security assessment, enumeration, and penetration testing.
 
- ### Prerequisites for Running the Script
+ ### Overview
+ ADKAVEH is an interactive PowerShell tool designed for security 
+ professionals to perform comprehensive Active Directory security assessments. 
+ It provides both enumeration capabilities and controlled attack simulations 
+ to identify vulnerabilities in AD environments.
 
-1. **Windows Operating System:**
+###  Supported Attacks & Techniques
+     ADKAVEH provides comprehensive support for various 
+     Active Directory attack techniques, focusing on both 
+     enumeration and exploitation phases:
 
-This script is designed for Windows environments and requires PowerShell.
+   # Enumeration & Discovery Attacks
 
-2. **PowerShell Modules:**
+ # 1. Kerberoasting Attack
 
- The script utilizes the ActiveDirectory and GroupPolicy
- modules. These modules are typically pre-installed on Windows Server 
- systems. However, if they are not installed, you can install them using 
- the following command:
-                       Install-WindowsFeature -Name RSAT-AD-PowerShell
+    - Purpose: Identify service accounts vulnerable to offline password cracking
+    - Technique: Enumerates user accounts with Service Principal Names (SPNs)
+    - Output: Lists all SPN-enabled accounts with their service principal names
+    - Use Case: Service account compromise and privilege escalation
 
-After installation, import the modules using the following command:
-                       Import-Module ActiveDirectory
-                       Import-Module GroupPolicy
+# 2. AS-REP Roasting Attack
 
-3. **Administrative Access:**
-   - To execute this script, you need Domain Admin privileges or equivalent 
-     permissions, as many of the script's functions access sensitive AD information.
+    - Purpose: Discover accounts vulnerable to pre-authentication bypass
+    - Technique: Identifies accounts with "Do Not Require Pre-Authentication" setting (UserAccountControl flag 4194304)
+    - Output: Lists accounts vulnerable to AS-REP hash extraction
+    - Use Case: Offline password cracking of user accounts
 
-4. **Temporarily Disabling Windows Defender:**
-  - Some functions of this script may be blocked by Windows Defender. Therefore,
-    the script temporarily disables Windows Defender. If Windows Defender 
-    is already disabled, this step is not necessary.
+# 3. Inactive Account Discovery
 
-5. **Domain Information:**
-   - To run the script, you need the domain name (DomainName), username 
-     (Username), and password (Password). These details are used to connect 
-      to the domain and execute commands.
+    - Purpose: Find abandoned or forgotten user accounts
+    - Technique: Searches for accounts inactive for more than 90 days
+    - Output: Lists inactive accounts with last logon dates
+    - Use Case: Account takeover and persistence establishment
 
-  ### Use : 
-            .\ADKAVEH.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString) -Verbose -Parallel
+# 4. KRBTGT Account Analysis
 
-   ### Script Capabilities
-   
-     This script includes various functions for assessing and attacking Active Directory. Below are the main capabilities        explained:
+    - Purpose: Detect potential Golden Ticket attacks
+    - Technique: Checks KRBTGT account password last set time
+    - Output: KRBTGT account information and password change history
+    - Use Case: Golden Ticket attack detection and forensic analysis
 
- **Temporarily Disabling Windows Defender:**
-   - To prevent the script from being blocked by Windows Defender, this function temporarily disables Defender.
+### Active Exploitation Attacks
 
-**Kerberoasting Check:**
-   - This function identifies user accounts with Service Principal Names (SPNs) that could be exploited in Kerberoasting attacks.
+# 5. Password Spraying Attack
+
+    - Purpose: Test single passwords across multiple user accounts
+    - Technique: Attempts authentication with one password against user list
+   # Features:
+        - 5-second delay between attempts to avoid lockouts
+        - File share connection testing for credential validation
+        - Real-time success/failure reporting
+        - Use Case: Initial access and low-privilege account compromise
+
+# 6. Windows Defender Disable
+
+    - Purpose: Evade endpoint protection detection
+    - Technique: Disables Windows Defender real-time monitoring
+   # Features:
+        - High-privilege requirement validation
+        - User confirmation before execution
+        - Error handling and status reporting
+        - Use Case: Defense evasion and persistence maintenance
+        
+### Security Features & Protections
+  # Safety Mechanisms
+
+    - Warning System: Clear warnings before high-risk operations
+    - User Confirmation: Manual approval required for dangerous actions
+    - Rate Limiting: Built-in delays to prevent account lockouts
+    - Error Handling: Comprehensive error reporting and recovery
+
+# Authentication Security
+
+    - Secure Credential Storage: Uses PSCredential objects for safe credential handling
+    - Module Validation: Verifies required PowerShell modules before execution
+    - Domain Authentication: Supports proper domain credential authentication
+
+ ### **Features**
+   # Enumeration & Discovery
  
-**ACL Misuse Check:**
-   - This function examines Access Control Lists (ACLs) to detect unauthorized access or potential ACL misuse.
+    - Kerberoasting Scan: Identify user accounts with Service Principal Names (SPNs)
+    - AS-REP Roasting Scan: Discover accounts with "Do Not Require Pre-Authentication" setting
+    - Inactive Account Discovery: Find accounts inactive for more than 90 days
+    - KRBTGT Account Analysis: Check KRBTGT password last set time for Golden Ticket detection
+  # Attack Simulations
 
-**Password Spraying Attack:**
-   - This function simulates a Password Spraying attack. It uses a test password to attempt logins on user accounts.
+    - Password Spraying: Controlled password spraying with configurable delays
+    - Defender Disable: Windows Defender real-time monitoring disable (High-risk operation)
 
-**Golden Ticket Detection:**
-    - This function reviews security event logs to detect signs of Golden Ticket attacks.
 
-**Discovery of Inactive Accounts:**
-    - This function identifies user accounts that have been inactive for more than 90 days.
+  #  Installation & Requirements
+  # Prerequisites
+    
+    - Windows: PowerShell 5.1+ with RSAT-AD-PowerShell module
+    - Linux: PowerShell 7+ with appropriate network connectivity to domain controllers
+    - Appropriate permissions for AD queries
+    - Legal authorization to test the target environment
 
-**GPO Misuse Check:**
-      This function reviews Group Policy Objects (GPOs) to detect unauthorized access or potential GPO misuse.
+  # Windows Installation
+  # Ensure RSAT is installed (Windows 10/11)
+    Get-WindowsCapability -Name RSAT* -Online | Add-WindowsCapability -Online
+  # Clone or download the script
+    git clone https://github.com/TryHackBox/ADKAVEH.git
 
-**AdminSDHolder Misuse Check:**
-      This function examines AdminSDHolder to detect unauthorized access or potential misuse.
+  # Linux Installation (Ubuntu/Debian/Kali)
+    Method 1: Official Microsoft Repository (Recommended)
+    # Update system
+        sudo apt update && sudo apt upgrade -y
 
-**AS-REP Roasting Check:**
-      This function identifies user accounts that do not require Kerberos 
-      Pre-Authentication and could be exploited in AS-REP Roasting attacks.
+  # Install prerequisites
+        sudo apt install -y wget apt-transport-https software-properties-common
 
-**Unconstrained Delegation Misuse Check:**
-      This function identifies computers with Unconstrained Delegation enabled.
+  # Install PowerShell 7
+     # For Ubuntu:
+         wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+         sudo dpkg -i packages-microsoft-prod.deb
+         rm packages-microsoft-prod.deb
 
-**Constrained Delegation Misuse Check:**
-      This function identifies user accounts with Constrained Delegation enabled.
+      # For Debian/Kali:
+         wget -q https://packages.microsoft.com/config/debian/$(lsb_release -rs)/packages-microsoft-prod.deb
+         sudo dpkg -i packages-microsoft-prod.deb
+         rm packages-microsoft-prod.deb
 
-### Tool Advantages
+  # Install PowerShell
+        sudo apt update
+        sudo apt install -y powershell
 
-**1.Comprehensiveness:**
-       This script covers a wide range of common attacks and vulnerabilities in Active Directory.
+  # Verify installation
+         pwsh --version
 
-**2.Ease of Use:**
-       Using simple PowerShell commands, users can easily execute the script and view the results.
+      Method 2: Snap Package
+         # Install snapd if not available
+           sudo apt update
+           sudo apt install -y snapd
 
-**3.No Need for External Tools:**
-        The script utilizes built-in PowerShell tools and standard Windows modules, eliminating the need for installing              external tools.
+  # Install PowerShell via snap
+           sudo snap install powershell --classic
 
-**4.Customizability:**
-         Users can enable or disable specific functions or modify script parameters to align with their requirements.
+  # Start PowerShell
+            pwsh
+        Method 3: Direct Download
+           # Download latest PowerShell release
+           wget https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell-7.4.0-linux-x64.tar.gz
+  
+           # Extract and install
+              tar -xzf powershell-7.4.0-linux-x64.tar.gz
+              sudo mv powershell /usr/local/bin/
 
-**5.Security:**
-         By temporarily disabling Windows Defender, the script can run without restrictions, but Defender is re-enabled              after execution.
+   ### Usage
+   # Basic Execution
+       # Run the interactive menu (Windows)
+         .\ADKAVEH.ps1
 
-### How to Execute the Script
+       # Run on Linux
+          pwsh -File ADKAVEH.ps1
 
-1. Save the script in a file with a `.ps1` extension, for example, `AD-Attack-Script.ps1`.
+# Interactive Menu Options
+   ==================== ADKAVEH Main Menu ====================
+    -- Enumeration --
+    1. Scan for Kerberoastable Accounts
+    2. Scan for AS-REP Roastable Accounts
+    3. Find Inactive User Accounts (>90 days)
+    4. Check KRBTGT Account Info (Golden Ticket Indicator)
 
-2. Open PowerShell with administrative privileges (Run as Administrator).
+    -- Attack & High-Risk --
+    5. Perform Password Spraying Attack
+    6. Disable Windows Defender (VERY NOISY!)
 
-3. Enter the following command to execute the script:
-
-   .\ADKaveh.ps1 -Domain example.com -Username admin -Password (Read-Host -AsSecureString)
+    99. Exit
+    
+   ### Linux-Specific Considerations
    
-4. If you need help, use the following command:
+   When running on Linux, ensure:
 
-    .\ADKaveh.ps1 -Help
+    - Network connectivity to domain controllers
+    - Proper DNS resolution for the target domain
+    - Appropriate firewall rules for AD communication
+    - Valid domain credentials with necessary permissions
+
+  
+# Output Examples
+  Kerberoasting Results
+  
+      SamAccountName SPNs
+      -------------- ----
+      svc_sql        MSSQLSvc/sql01.contoso.local:1433
+      svc_web        HTTP/webapp.contoso.com
+
+   KRBTGT Analysis
+
+        Name    DistinguishedName                  PasswordLastSet
+         ----    -----------------                  ---------------
+        krbtgt  CN=krbtgt,CN=Users,DC=contoso,DC=local 9/15/2024 2:30:45 PM
+        
+### Important Warnings
+ # Legal & Ethical Considerations
+
+    - Only use on systems you own or have explicit written permission to test
+    - This tool is for authorized security assessments only
+    - Unauthorized use may violate laws and regulations
+ # Operational Risks
+
+    - Password spraying can cause account lockouts
+    - Defender disable is extremely noisy and will trigger alerts
+    - All operations should be performed during approved testing windows
+    - Linux execution may have different behavioral characteristics than Windows
+
+
+### Use Cases
+
+# Red Team Operations
+
+    - Internal penetration testing
+    - AD security posture assessment
+    - Privilege escalation path discovery
+    - Cross-platform security testing
+# Blue Team Defense
+
+    - Identifying misconfigured accounts
+    - Discovering inactive user accounts
+    - Detecting potential Golden Ticket indicators
+    - Security tool validation across platforms
+
+# Security Auditing
+
+    - Compliance checking (NIST, CIS, etc.)
+    - Configuration validation
+    - Security hardening assessment
+    - Multi-platform environment testing
 
    
-### Security Warning
+### Technical Details
 
-This script is designed for security testing and educational purposes only.
+# Dependencies
 
-By using this script, you can identify and address potential vulnerabilities in your Active Directory.
+    - Windows: ActiveDirectory PowerShell module (RSAT)
+    - Linux: PowerShell 7+ with network connectivity to AD
+    - .NET Framework 4.5+ (Windows) / .NET Core (Linux)
+    - Appropriate network connectivity to domain controllers
 
+# Authentication
 
+    - Supports domain credentials input
+    - Uses PSCredential objects for secure authentication
+    - Validates module availability before execution
+    - Works with both Windows and Linux PowerShell environments
+
+# Cross-Platform Compatibility
+
+    - Windows: Native support with full AD module capabilities
+    - Linux: Requires network connectivity to AD, some features may have limitations
+    - Tested on Ubuntu, Debian, Kali Linux, and Windows 10/11
+
+### Operational Considerations
+ # Attack Characteristics
+
+    - Kerberoasting: Medium noise level, typically goes undetected
+    - AS-REP Roasting: Low noise level, difficult to detect
+    - Password Spraying: High noise level, may trigger alerts
+    - Defender Disable: Extreme noise level, will trigger immediate alerts
+
+# Best Practices
+
+    - Always test during approved maintenance windows
+    - Use dedicated test accounts when possible
+    - Monitor environment for unintended consequences
+    - Document all activities for reporting purposes
+
+# This comprehensive attack capability set makes ADKAVEH an essential tool for security professionals conducting authorized Active Directory security assessments.
+
+# License
+
+This project is licensed under the MIT License.
+
+  # Support
+
+    Author: Kaveh 
+    Twitter: @kavehxnet https://twitter.com/kavehxnet
+
+# Note: All attacks should only be performed in authorized environments with proper written permission. Unauthorized testing may violate laws and organizational policies. 
+
+### Disclaimer
+
+This tool is provided for educational and authorized security testing purposes only. 
+The developers are not responsible for any misuse or damage caused by this tool. 
+Always obtain proper authorization before conducting any security assessments.
+
+Linux Note: While ADKAVEH works on Linux, some Active Directory features 
+may behave differently compared to Windows. Always validate results in your specific environment.
+
+# Remember: With great power comes great responsibility. Use ADKAVEH ethically and legally across all platforms! 
