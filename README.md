@@ -199,7 +199,7 @@ A comprehensive PowerShell-based Script for Active Directory security assessment
  # Legal & Ethical Considerations
 
     - Only use on systems you own or have explicit written permission to test
-    - This tool is for authorized security assessments only
+    - This script is for authorized security assessments only
     - Unauthorized use may violate laws and regulations
  # Operational Risks
 
@@ -222,7 +222,7 @@ A comprehensive PowerShell-based Script for Active Directory security assessment
     - Identifying misconfigured accounts
     - Discovering inactive user accounts
     - Detecting potential Golden Ticket indicators
-    - Security tool validation across platforms
+    - Security script validation across platforms
 
 # Security Auditing
 
@@ -269,7 +269,7 @@ A comprehensive PowerShell-based Script for Active Directory security assessment
     - Monitor environment for unintended consequences
     - Document all activities for reporting purposes
 
-# This comprehensive attack capability set makes ADKAVEH an essential tool for security professionals conducting authorized Active Directory security assessments.
+# This comprehensive attack capability set makes ADKAVEH an essential script for security professionals conducting authorized Active Directory security assessments.
 
 # License
 
@@ -287,8 +287,8 @@ This project is licensed under the MIT License.
 
 ### Disclaimer
 
-This tool is provided for educational and authorized security testing purposes only. 
-The developers are not responsible for any misuse or damage caused by this tool. 
+This script is provided for educational and authorized security testing purposes only. 
+The developers are not responsible for any misuse or damage caused by this script. 
 Always obtain proper authorization before conducting any security assessments.
 
 Linux Note: While ADKAVEH works on Linux, some Active Directory features 
