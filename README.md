@@ -275,11 +275,14 @@ A comprehensive PowerShell-based toolkit for Active Directory security assessmen
 
 This project is licensed under the MIT License.
 
-  # Support
 
-    Author: Kaveh 
-    Twitter: @kavehxnet https://twitter.com/kavehxnet
+### Support
 
+  # Author: Kaveh 
+  # Twitter: @kavehxnet https://twitter.com/kavehxnet
+  # Twitter : @OffensivePwn https://twitter.com/OffensivePwn
+
+    
 # Note: All attacks should only be performed in authorized environments with proper written permission. Unauthorized testing may violate laws and organizational policies. 
 
 ### Disclaimer
