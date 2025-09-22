@@ -1,8 +1,8 @@
-# ADKAVEH - Active Directory Penetration Testing Toolkit -  Active Directory Enumeration & Attack Framework
-A comprehensive PowerShell-based toolkit for Active Directory security assessment, enumeration, and penetration testing.
+# ADKAVEH - Active Directory Penetration Testing Script -  Active Directory Enumeration & Attack Framework
+A comprehensive PowerShell-based Script for Active Directory security assessment, enumeration, and penetration testing.
 
  ### Overview
- ADKAVEH is an interactive PowerShell tool designed for security 
+ ADKAVEH is an interactive PowerShell script designed for security 
  professionals to perform comprehensive Active Directory security assessments. 
  It provides both enumeration capabilities and controlled attack simulations 
  to identify vulnerabilities in AD environments.
