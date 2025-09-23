@@ -58,9 +58,6 @@ Requirements:
 ### High-Risk Operations (require explicit confirmation)
 ``` .\ADKAVEH.ps1 -DisableDefender -ConfirmUnsafe ```
 
-### Audit-Only Mode
-``` .\ADKAVEH.ps1 -Audit ```
-
 # Collects information but does not perform attacks.
 
 # Safety & Legal Disclaimer
@@ -76,8 +73,6 @@ Requirements:
 [+] Improve cross-platform testing (Linux/macOS via pwsh).
 
 [+] Add randomized jitter for spraying delays.
-
-[+] Expand audit-only capabilities.
 
 [+] Harden logging and credential handling.
 
