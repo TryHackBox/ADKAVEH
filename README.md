@@ -36,6 +36,7 @@ Running it in environments without explicit written permission may be illegal an
 ### Installation
 
 Requirements:
+
 [+] PowerShell 5.1+ (Windows) or PowerShell 7+ (Linux/macOS).
 
 [+] Domain-joined system or appropriate network access.
@@ -47,8 +48,8 @@ Requirements:
 git clone https://github.com/TryHackBox/ADKAVEH
 cd ADKAVEH
 
-### Usage 
-# Basic Enumeration
+# Usage 
+### Basic Enumeration
 .\ADKAVEH.ps1 -EnumDomain
 
 # Password Spraying (safe with delay)
