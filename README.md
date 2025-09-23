@@ -43,14 +43,6 @@ Requirements:
 
 [+] Sufficient privileges for enumeration/attacks being tested.
 
-# Install RSAT-AD-PowerShell
-Enable-WindowsOptionalFeature -Online -FeatureName RSATClient-Roles-AD-Powershell
-
-# Clone & Run
-git clone https://github.com/TryHackBox/ADKAVEH.git
-cd ADKAVEH
-.\kaveh.ps1
-
 # Clone the repository:
   git clone https://github.com/TryHackBox/ADKAVEH
 
