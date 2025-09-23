@@ -43,6 +43,13 @@ Requirements:
 
 [+] Sufficient privileges for enumeration/attacks being tested.
 
+# Install RSAT-AD-PowerShell
+Enable-WindowsOptionalFeature -Online -FeatureName RSATClient-Roles-AD-Powershell
+
+# Clone & Run
+git clone https://github.com/TryHackBox/ADKAVEH.git
+cd ADKAVEH
+.\kaveh.ps1
 
 # Clone the repository:
   git clone https://github.com/TryHackBox/ADKAVEH
@@ -66,8 +73,11 @@ Requirements:
 
 # Safety & Legal Disclaimer
 [+] Use only in environments where you have explicit written permission.
+
 [+] Some modules can disable security tools or trigger account lockouts.
+
 [+] Default configuration includes rate-limiting and delays to reduce risk.
+
 [+] The authors take no responsibility for misuse or damage caused by this script.
 
 ### Roadmap
@@ -78,14 +88,6 @@ Requirements:
 [+] Expand audit-only capabilities.
 
 [+] Harden logging and credential handling.
-
-### Contributing
-
-Contributions are welcome. Please:
-
-1. Open an issue for discussion before submitting a PR.
-2. Ensure new features have safety checks and documentation.
-3. Avoid adding modules that bypass or disable security controls without explicit safeguards.
 
 ### Support
   # Author: Kaveh 
@@ -99,5 +101,4 @@ Contributions are welcome. Please:
     
     Report issues or suggest features.
 # License
-
 This project is licensed under the MIT License.
