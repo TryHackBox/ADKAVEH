@@ -52,18 +52,18 @@ Requirements:
 
 # Usage 
 ### Basic Enumeration
-.\ADKAVEH.ps1 -EnumDomain
+``` .\ADKAVEH.ps1 -EnumDomain ```
 
 ### Password Spraying (safe with delay)
-.\ADKAVEH.ps1 -PasswordSpray -UserList users.txt -Password Winter2025! -Delay 5
+``` .\ADKAVEH.ps1 -PasswordSpray -UserList users.txt -Password Winter2025! -Delay 5 ```
 
 ### High-Risk Operations (require explicit confirmation)
-.\ADKAVEH.ps1 -DisableDefender -ConfirmUnsafe
+``` .\ADKAVEH.ps1 -DisableDefender -ConfirmUnsafe ```
 
 ### Audit-Only Mode
-#.\ADKAVEH.ps1 -Audit
+``` .\ADKAVEH.ps1 -Audit ```
 
-### Collects information but does not perform attacks.
+# Collects information but does not perform attacks.
 
 # Safety & Legal Disclaimer
 [+] Use only in environments where you have explicit written permission.
