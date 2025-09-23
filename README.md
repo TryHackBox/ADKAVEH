@@ -60,7 +60,7 @@ Requirements:
 .\ADKAVEH.ps1 -DisableDefender -ConfirmUnsafe
 
 ### Audit-Only Mode
-.\ADKAVEH.ps1 -Audit
+#.\ADKAVEH.ps1 -Audit
 
 ### Collects information but does not perform attacks.
 
