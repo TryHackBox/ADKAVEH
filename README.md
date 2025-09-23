@@ -31,8 +31,6 @@ Running it in environments without explicit written permission may be illegal an
 
 [+] Configurable rate-limiting & delays.
 
-[+] Audit-only mode (--Audit) for safe testing.
-
 ### Installation
 
 Requirements:
