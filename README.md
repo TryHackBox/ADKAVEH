@@ -19,13 +19,18 @@ Running it in environments without explicit written permission may be illegal an
 
 # Attack Simulation (with explicit confirmation)
 [+] Kerberoasting.
+
 [+] AS-REP roasting.
+
 [+] Password spraying (with rate-limiting and delays).
+
 [+] Optional Defender tamper tests (requires --ConfirmUnsafe).
 
 # Operational Support
 [+] Credential input via Get-Credential.
+
 [+] Configurable rate-limiting & delays.
+
 [+] Audit-only mode (--Audit) for safe testing.
 
 ### Installation
@@ -39,7 +44,6 @@ Requirements:
 
 
 # Clone the repository:
-
 git clone https://github.com/TryHackBox/ADKAVEH
 cd ADKAVEH
 
@@ -65,10 +69,13 @@ cd ADKAVEH
 [+] The authors take no responsibility for misuse or damage caused by this script.
 
 # Roadmap
-[+] Improve cross-platform testing (Linux/macOS via pwsh)
-[+] Add randomized jitter for spraying delays
-[+] Expand audit-only capabilities
-[+] Harden logging and credential handling
+[+] Improve cross-platform testing (Linux/macOS via pwsh).
+
+[+] Add randomized jitter for spraying delays.
+
+[+] Expand audit-only capabilities.
+
+[+] Harden logging and credential handling.
 
 ### Contributing
 
