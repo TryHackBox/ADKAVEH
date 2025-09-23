@@ -11,29 +11,34 @@ Running it in environments without explicit written permission may be illegal an
 
 ### Features
 # Enumeration
-[+] Domain, users, groups, and computers
-[+] Kerberos-related data (SPNs, AS-REP accounts, KRBTGT status)
-[+] GPOs and security policies
+[+] Domain, users, groups, and computers.
+
+[+] Kerberos-related data (SPNs, AS-REP accounts, KRBTGT status).
+
+[+] GPOs and security policies.
 
 # Attack Simulation (with explicit confirmation)
-[+] Kerberoasting
-[+] AS-REP roasting
-[+] Password spraying (with rate-limiting and delays)
-[+] Optional Defender tamper tests (requires --ConfirmUnsafe)
+[+] Kerberoasting.
+[+] AS-REP roasting.
+[+] Password spraying (with rate-limiting and delays).
+[+] Optional Defender tamper tests (requires --ConfirmUnsafe).
 
 # Operational Support
-[+] Credential input via Get-Credential
-[+] Configurable rate-limiting & delays
-[+] Audit-only mode (--Audit) for safe testing
+[+] Credential input via Get-Credential.
+[+] Configurable rate-limiting & delays.
+[+] Audit-only mode (--Audit) for safe testing.
 
 ### Installation
 
 Requirements:
-[+] PowerShell 5.1+ (Windows) or PowerShell 7+ (Linux/macOS)
-[+] Domain-joined system or appropriate network access
-[+] Sufficient privileges for enumeration/attacks being tested
+[+] PowerShell 5.1+ (Windows) or PowerShell 7+ (Linux/macOS).
 
-Clone the repository:
+[+] Domain-joined system or appropriate network access.
+
+[+] Sufficient privileges for enumeration/attacks being tested.
+
+
+# Clone the repository:
 
 git clone https://github.com/TryHackBox/ADKAVEH
 cd ADKAVEH
@@ -75,16 +80,15 @@ Contributions are welcome. Please:
 
 ### Support
   # Author: Kaveh 
-   ** Twitter:** @kavehxnet https://twitter.com/kavehxnet
-   ** Twitter :** @OffensivePwn https://twitter.com/OffensivePwn
-  Star the repo.
-  Watch for updates.
-  Report issues or suggest features.
+    Twitter: @kavehxnet https://twitter.com/kavehxnet
+    
+    Twitter: @OffensivePwn https://twitter.com/OffensivePwn
+    
+    Star the repo.
+    
+    Watch for updates.
+    
+    Report issues or suggest features.
 # License
 
 This project is licensed under the MIT License.
-
-
-
-    
-
