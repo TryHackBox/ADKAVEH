@@ -44,9 +44,11 @@ Requirements:
 [+] Sufficient privileges for enumeration/attacks being tested.
 
 # Clone the repository:
+```bash
   git clone https://github.com/TryHackBox/ADKAVEH
 
   cd ADKAVEH
+```
 
 # Usage 
 ### Basic Enumeration
