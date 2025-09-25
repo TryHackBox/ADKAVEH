@@ -87,5 +87,5 @@ Requirements:
     Watch for updates.
     
     Report issues or suggest features.
-# License
-This project is licensed under the MIT License.
+# Copyright
+Copyright (c) 2025 Kaveh Miri. This project is licensed under the Apache 2.0 License
