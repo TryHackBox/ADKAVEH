@@ -1,5 +1,3 @@
-
-```powershell
 param (
     [switch]$Help
 )
@@ -191,5 +189,3 @@ while ($true) {
         default { Write-Host "[!] Invalid choice. Please try again." -ForegroundColor Red }
     }
 }
-```
-
