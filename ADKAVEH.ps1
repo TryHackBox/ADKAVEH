@@ -8,6 +8,7 @@ function Show-Help {
     Write-Host @"
 ========================================================
 ADKAVEH https://www.x.com/kavehxnet
+By Kaveh https://www.x.com/OffensivePwn
 ========================================================
 
 This script is now an interactive tool for AD enumeration and attacks.
@@ -191,3 +192,4 @@ while ($true) {
     }
 }
 ```
+
